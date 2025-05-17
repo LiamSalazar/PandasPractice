@@ -109,3 +109,60 @@ print("")
 df['Referee'] = df['Referee'].fillna('Sin dato')
 print("Tabla sin valores nulos en referee")
 print(df.head())
+
+print("")
+# Agrupación por columna
+locales = df.groupby('HomeTeam')['FTHG'].sum()
+print("Agrupado por equipo local y después suma de goles locales")
+print(locales.head())
+
+print("")
+# Promedio de tarjetas sobre equipo local
+# En este caso agrupara todo lo del Madrid por ejemplo y sacará el promedio de tarjetas amarillas.
+amarillas_sobre_local = df.groupby('HomeTeam')['HY'].mean()
+print("Promedio de amarillas sobre equipo local: ")
+print(amarillas_sobre_local.head())
+
+print("")
+# Agrupamiento por más columnas, poniendolas en arreglo para el parámetro
+# Agrupa por equipo y luego agrupa sus resultados para ver cuantas veces ha ganado o perdido
+doble_columna = df.groupby(['HomeTeam', 'FTR']).size()
+print("Agrupamiento por doble columna")
+print(doble_columna.head())
+
+print("")
+# Lista de equipos mas goleadores en casa de mayor a menor
+goleadores_locales = df.groupby('HomeTeam')['FTHG'].sum().sort_values(ascending=False)
+print(goleadores_locales.head())
+
+print("")
+# Goles del Real Madrid como local
+# Primer método: Aplico un filtro para seleccionar donde el Madrid es local
+madrid_local = df[df['HomeTeam'] == 'Real Madrid']
+goles_madrid_local = madrid_local['FTHG'].sum()
+print("PRIMER MÉTODO")
+print("Goles del Real Madrid como local")
+print(madrid_local)
+print("Goles de local del Real Madrid: ", goles_madrid_local)
+
+# Segundo método: Agrupo por equipo local y sumo los goles locales, luego busco al real madrid y devuelvo el valor
+goles_equipos = df.groupby('HomeTeam')['FTHG'].sum()
+goles_madrid = goles_equipos['Real Madrid']
+print("SEGUNFO MÉTODO")
+print(goles_equipos)
+print("Goles del Real Madrid:")
+print(goles_madrid)
+
+print("")
+# Equipo con más goles recibidos como visitante
+goles_recibidos_equipos_visitantes = df.groupby('AwayTeam')['FTHG'].sum().sort_values(ascending=False)
+equipo_visitante_mas_goleado = goles_recibidos_equipos_visitantes.idxmax() 
+print("Equipos más goleados:")
+print(goles_recibidos_equipos_visitantes)
+print(equipo_visitante_mas_goleado)
+
+print("")
+# Promedio de goles por partido para cada equipo visitante
+promedio_goles_visitantes = df.groupby("AwayTeam")['FTAG'].mean()
+print("Promedio de goles por equipo visitante")
+print(promedio_goles_visitantes.head())
