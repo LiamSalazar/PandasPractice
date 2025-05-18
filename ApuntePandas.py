@@ -1,6 +1,6 @@
 import pandas as pd 
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 # Creación de una serie
 serie = pd.Series([1,2,3,4,5,6,7,8,9])
@@ -211,6 +211,31 @@ print("")
 # Manejo de Resample()
 fechas = df.copy()
 fechas.set_index('Date', inplace=True)
-goles_mensuales = fechas['TG'].resample('M').sum()
+goles_mensuales = fechas['TG'].resample('ME').sum()
 print("Uso de resamble para análisis por periodos de tiempo")
 print(goles_mensuales)
+
+print("")
+# Visualización mediante matplotlib
+# Gráfico de líneas
+goles_mensuales.plot(kind='line', marker='o')
+plt.title("Goles por mes")
+plt.xlabel("Mes")
+plt.ylabel("Total de Goles")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Grafico de Barras
+tabla_puntos.plot(kind='bar', figsize=(10, 5))
+plt.title("Puntos por equipo")
+plt.ylabel("Puntos")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Grafico de Pastel
+tabla_puntos.head(5).plot(kind='pie', y=None, autopct='%1.1f%%', figsize=(6,6))
+plt.title("Top 5: Distribución de puntos")
+plt.ylabel("")  # Para quitar la etiqueta del eje Y
+plt.show()
