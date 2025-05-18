@@ -1,5 +1,6 @@
 import pandas as pd 
 import numpy as np
+import matplotlib as plt
 
 # Creación de una serie
 serie = pd.Series([1,2,3,4,5,6,7,8,9])
@@ -166,3 +167,50 @@ print("")
 promedio_goles_visitantes = df.groupby("AwayTeam")['FTAG'].mean()
 print("Promedio de goles por equipo visitante")
 print(promedio_goles_visitantes.head())
+
+print("")
+# Ordenamiento por columnas
+# Partidos con más goles del local
+partidos_mas_goles_local = df.sort_values('FTHG', ascending=False)
+print("Partidos con más goles del local")
+print(partidos_mas_goles_local.head())
+
+print("")
+# Filtro de partidos donde Madrid fue local y anotó al menos 3 goles
+madrid_local_goleador = df[(df['HomeTeam'] == 'Real Madrid') & (df['FTHG'] >= 3)]
+print("Partidos donde Real Madrid anotó al menos 3 goles de local")
+print(madrid_local_goleador.head())
+
+print("")
+# Nueva serie para agrupar los puntos conseguidos de cada equipo en la temporada
+puntos_local = df.copy()
+puntos_local['Puntos'] = np.where(puntos_local['Ganador'] == 'Local', 3, np.where(puntos_local['Ganador'] == 'Visitante', 0, 1))
+puntos_visitante = df.copy()
+puntos_visitante['Puntos'] = np.where(puntos_visitante['Ganador'] == 'Visitante', 3, np.where(puntos_visitante['Ganador'] == 'Local', 0, 1))
+puntos_local = puntos_local.groupby('HomeTeam')['Puntos'].sum()
+puntos_visitante = puntos_visitante.groupby('AwayTeam')['Puntos'].sum()
+tabla_puntos = puntos_local.add(puntos_visitante, fill_value=0).sort_values(ascending=False)
+print("Tabla de puntos de la temporada")
+print(tabla_puntos.head())
+
+# Exportar la tabla de puntos por equipo
+tabla_puntos.to_csv('tabla_de_LaLiga.csv', index=False)
+tabla_puntos.to_excel('tabla_de_LaLiga.xlsx', index=True)
+
+# Extraer componentes de fecha
+df['Año'] = df['Date'].dt.year
+df['Mes'] = df['Date'].dt.month
+df['Día'] = df['Date'].dt.day
+df['NombreMes'] = df['Date'].dt.month_name()
+df['NombreDía'] = df['Date'].dt.day_name()
+# Elementos de la fecha
+print("Fecha separada")
+print(df.head())
+
+print("")
+# Manejo de Resample()
+fechas = df.copy()
+fechas.set_index('Date', inplace=True)
+goles_mensuales = fechas['TG'].resample('M').sum()
+print("Uso de resamble para análisis por periodos de tiempo")
+print(goles_mensuales)
